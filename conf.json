@@ -1,6 +1,6 @@
 {
   "Host" : "localhost" ,
-  "DataBaseName" : "NIX" ,
+  "DataBaseName" : "nix" ,
   "User" : "nixsgf" ,
   "Password" : "4dm1n=NIX2016"
 }

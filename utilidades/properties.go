@@ -23,7 +23,7 @@ func Init()  Configuration {
 	
 	// se adiciona ya que no lee el archivo json
 	Parametros.Host = "localhost" 
-    Parametros.DataBaseName = "NIX" 
+    Parametros.DataBaseName = "nix" 
     Parametros.User = "nixsgf" 
     Parametros.Password = "4dm1n=NIX2016"
   

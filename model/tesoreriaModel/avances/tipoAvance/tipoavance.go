@@ -2,7 +2,7 @@ package tipoavance
 
 type Tipoavance struct {
     // db tag lets you specify the column name if it differs from the struct field
-    IdTipo         int64   `db:"id_tipo" json:"IdTipo" `
+    IdTipo         int64   `db:"id" json:"IdTipo" `
     Referencia      string  `db:"referencia" json:"Referencia"`
     Nombre          string  `db:"nombre" json:"Nombre"`
     Descripcion     string  `db:"descripcion" json:"Descripcion"`

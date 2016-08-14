@@ -5,7 +5,9 @@ import (
 	"database/sql"
 
     "nix/utilidades"
-	"nix/model/tesoreria"
+	"nix/model/tesoreriaModel/avances/tipoAvance"
+	"nix/model/tesoreriaModel/avances/requisitos"
+	"nix/model/tesoreriaModel/avances/requisitoTipoAvance"
 
 	_ "github.com/lib/pq"
 	"gopkg.in/gorp.v1"
@@ -21,6 +23,8 @@ func GetConnectionDB() *gorp.DbMap {
 	// construct a gorp DbMap
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
 	dbmap.AddTableWithName(tipoavance.Tipoavance{},"Tipoavance").SetKeys(true, "IdTipo")
+	dbmap.AddTableWithName(requisito.Requisito{},"Requisito").SetKeys(true, "IdReq")
+	dbmap.AddTableWithName(requisitotipoavance.RequisitoTipoavance{},"RequisitoTipoavance").SetKeys(true, "IdTipo")
 	utilidades.CheckErr(err, "Create tables failed")
 
 	return dbmap
