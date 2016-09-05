@@ -1,7 +1,7 @@
 package requisitotipoavanceweb
 
 import (
-	"fmt"
+	//"fmt"
 	"nix/model/tesoreriaModel/avances/requisitoTipoAvance"
 	"nix/repository/tesoreriarepository/avances/requisitoTipoAvance"
 	"strconv"
@@ -50,7 +50,7 @@ func FindOne(c *gin.Context) {
 
 	tipoavanceid, _ := strconv.ParseInt(c.Params.ByName("idtipo"), 0, 64)
 	requisitoid, _ := strconv.ParseInt(c.Params.ByName("idreq"), 0, 64)
-	fmt.Println("IDW :",tipoavanceid,requisitoid)
+	//fmt.Println("IDW :",tipoavanceid,requisitoid)
 	requisitoAvance, msg := requisitotipoavancerepository.FindOne(tipoavanceid,requisitoid)
 	if msg.Code != 0 {
 		c.JSON(200, msg)

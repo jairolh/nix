@@ -8,6 +8,7 @@ import (
 	"nix/model/tesoreriaModel/avances/tipoAvance"
 	"nix/model/tesoreriaModel/avances/requisitos"
 	"nix/model/tesoreriaModel/avances/requisitoTipoAvance"
+	"nix/model/tesoreriaModel/avances/solicitudAvance"
 
 	_ "github.com/lib/pq"
 	"gopkg.in/gorp.v1"
@@ -25,6 +26,9 @@ func GetConnectionDB() *gorp.DbMap {
 	dbmap.AddTableWithName(tipoavance.Tipoavance{},"Tipoavance").SetKeys(true, "IdTipo")
 	dbmap.AddTableWithName(requisito.Requisito{},"Requisito").SetKeys(true, "IdReq")
 	dbmap.AddTableWithName(requisitotipoavance.RequisitoTipoavance{},"RequisitoTipoavance").SetKeys(true, "IdTipo")
+	dbmap.AddTableWithName(solicitudavance.Solicitud{},"Solicitud")
+	dbmap.AddTableWithName(solicitudavance.Beneficiario{},"BeneficiarioAvance").SetKeys(true, "IdBeneficiario")
+	dbmap.AddTableWithName(solicitudavance.Solicitudavance{},"SolicitudAvance").SetKeys(true, "IdSolicitud")	
 	utilidades.CheckErr(err, "Create tables failed")
 
 	return dbmap
