@@ -1,6 +1,6 @@
 package solicitudavance
 
-/*
+
 type SolicitudGeneral struct {
     // db tag lets you specify the column name if it differs from the struct field
     IdSolicitud     	int64   `db:"id_solicitud" json:"IdSolicitud" `
@@ -20,7 +20,7 @@ type SolicitudGeneral struct {
     Convenio			string  `db:"convenio" json:"Convenio"`
     CodigoProyectoInv  	string  `db:"codigo_proyecto_inv" json:"CodigoProyectoInv"`
     ProyectoInv			string  `db:"proyecto_inv" json:"ProyectoInv"`
-    Estado 		        string  `db:"estado" json:"Estado"`
+    EstadoActual 	    string  `db:"estado_actual" json:"EstadoActual"`
     IdEstado            int64   `db:"id_estado" json:"IdEstado" `
     FechaRegistro       string  `db:"fecha_registro" json:"FechaRegistro"`
     Observaciones       string  `db:"observaciones" json:"Observaciones"`
@@ -37,7 +37,7 @@ type SolicitudGeneral struct {
     Correo              string  `db:"correo" json:"Correo"`
     Telefono            string  `db:"telefono" json:"Telefono"`
     Celular             string  `db:"celular" json:"Celular"`
-}*/
+}
 
 
 type Solicitud struct {

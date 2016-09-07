@@ -2,11 +2,11 @@ package solicitudavanceweb
 
 import (
 	
-	_"fmt"
+	"fmt"
 	"nix/utilidades"
 	"nix/model/tesoreriaModel/avances/solicitudAvance"
 	"nix/repository/tesoreriarepository/avances/solicitudAvance"
-	//"strconv"
+	"strconv"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	_"encoding/json"
@@ -18,8 +18,8 @@ func Init(router *gin.Engine, middleware *jwt.GinJWTMiddleware) {
 	apiSolicitudavance := router.Group("/tesoreria")
 	//apiTipoavance.Use(middleware.MiddlewareFunc())
 
-	//apiTipoavance.GET("/tipoavance", List)
-	//apiTipoavance.GET("/tipoavance/:idtipo", FindOne)
+	apiSolicitudavance.GET("/solicitudavance/:vigencia", List)
+	apiSolicitudavance.GET("/solicitudavance/:vigencia/:idSolicitud", FindOne)
 	apiSolicitudavance.POST("/solicitudavance", Create)
 	//apiTipoavance.PUT("/tipoavance/:idtipo", Modify)
 	//apiTipoavance.PUT("/tipoavance", Modify)
@@ -28,15 +28,16 @@ func Init(router *gin.Engine, middleware *jwt.GinJWTMiddleware) {
 	solicitudavancerepository.Init()
 
 }
-/*
+
 func List(c *gin.Context) {
 
-	tiposavance, msg := tipoavancerepository.FindAll()
+	vigencia, _ := strconv.ParseInt(c.Params.ByName("vigencia"), 0, 64)
+	solicitudesavance, msg := solicitudavancerepository.FindAll(vigencia)
 	//consulta tipos de avance
 	if msg.Code != 0 {
 		c.JSON(200, msg)
 	} else {
-		c.JSON(200, tiposavance)
+		c.JSON(200, solicitudesavance)
 	}
 
 }
@@ -44,16 +45,16 @@ func List(c *gin.Context) {
 func FindOne(c *gin.Context) {
 
 	tipoavanceid, _ := strconv.ParseInt(c.Params.ByName("idtipo"), 0, 64)
-//	fmt.Println("IDW :",tipoavanceid)
-	tipoavance, msg := tipoavancerepository.FindOne(tipoavanceid)
+	fmt.Println("IDW :",tipoavanceid)
+	/*tipoavance, msg := tipoavancerepository.FindOne(tipoavanceid)
 
 
 	if msg.Code != 0 {
 		c.JSON(200, msg)
 	} else {
 		c.JSON(200, tipoavance)
-	}
-}*/
+	}*/
+}
 
 func Create(c *gin.Context) {
 

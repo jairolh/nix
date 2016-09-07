@@ -146,20 +146,33 @@ func FindOne( id int64) (tipoavance.Tipoavance, model.MessageReturn) {
 
 	return tipoavance, msg
 }
+*/
 
-func FindAll() ([]tipoavance.Tipoavance, model.MessageReturn) {
-	var tiposavance []tipoavance.Tipoavance
+func FindAll(vigencia int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
+	var solicitudesavance []solicitudavance.SolicitudGeneral
 	var consulta string
-	//consulta = "SELECT tav.id_tipo, tav.referencia, tav.nombre, tav.descripcion, tav.estado, tav.fecha_registro FROM tesoreria.tipo_avance tav"
-	consulta = "SELECT * FROM tesoreria.tipo_avance tav order by tav.referencia"
-    //fmt.Println("SELECT :",consulta)
-	_, err := connectionDB.Select(&tiposavance, consulta)
+	
+	consulta = "SELECT sol.id_solicitud, sol.id_beneficiario, sol.vigencia, sol.consecutivo, sol.objetivo, "
+    consulta = consulta+" sol.justificacion, sol.valor_total, sol.codigo_dependencia, sol.dependencia, "
+    consulta = consulta+" sol.codigo_facultad, sol.facultad, sol.codigo_proyecto_curricular, sol.proyecto_curricular, "
+    consulta = consulta+" sol.codigo_convenio, sol.convenio, sol.codigo_proyecto_inv, sol.proyecto_inv,"
+    consulta = consulta+" est_av.id_estado, est_av.fecha_registro, est.nombre estado_actual,"
+    consulta = consulta+" bene.id_beneficiario, bene.nombres, bene.apellidos, bene.tipo_documento, bene.documento"
+    consulta = consulta+" FROM tesoreria.solicitud_avance sol"
+    consulta = consulta+" INNER JOIN tesoreria.beneficiario bene ON bene.id_beneficiario=sol.id_beneficiario"
+    consulta = consulta+" INNER JOIN tesoreria.estado_avance est_av ON est_av.id_solicitud=sol.id_solicitud"
+    consulta = consulta+" INNER JOIN tesoreria.estados est ON est.id_estado=est_av.id_estado AND fecha_registro=(SELECT MAX(fecha_registro) FROM tesoreria.estado_avance WHERE id_solicitud=est_av.id_solicitud)"
+    consulta = consulta+" WHERE "
+    consulta = consulta+" sol.vigencia=$1 "
+    consulta = consulta+" ORDER BY sol.vigencia DESC, sol.consecutivo DESC"
+    //fmt.Println("dat :",consulta,vigencia)
+	_, err := connectionDB.Select(&solicitudesavance, consulta,vigencia)
 
-	msg := utilidades.CheckErr(err, "Error consultando la tabla tipos de avance")
-	return tiposavance, msg
+	msg := utilidades.CheckErr(err, "Error consultando la solicitud de avance")
+	return solicitudesavance, msg
 
 }
-*/
+
 
 func FindOneBeneficiario(beneficiario solicitudavance.Beneficiario) (solicitudavance.Beneficiario, model.MessageReturn) {	
 	
