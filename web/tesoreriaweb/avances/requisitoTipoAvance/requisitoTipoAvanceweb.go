@@ -41,9 +41,6 @@ func List(c *gin.Context) {
 	    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, requisitosAvance) }
 	}
 
-	
-	
-
 }
 
 func FindOne(c *gin.Context) {

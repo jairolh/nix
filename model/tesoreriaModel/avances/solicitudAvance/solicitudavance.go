@@ -47,6 +47,12 @@ type Solicitud struct {
         Estadosolicitud Estadosolicitudavance `json:"Estadosolicitud"`
     }
 
+type Consecutivoavance struct {
+    // db tag lets you specify the column name if it differs from the struct field
+    Vigencia            string  `db:"vigencia" json:"Vigencia"`
+    Consecutivo         string  `db:"consecutivo" json:"Consecutivo"`
+}    
+
 type Solicitudavance struct {
     // db tag lets you specify the column name if it differs from the struct field
     IdSolicitud     	int64   `db:"id_solicitud" json:"IdSolicitud" `

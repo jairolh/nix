@@ -7,6 +7,7 @@ import (
 	"nix/model/tesoreriaModel/avances/solicitudAvance"
 	"nix/repository/tesoreriarepository/avances/solicitudAvance"
 	"strconv"
+	"strings"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	_"encoding/json"
@@ -18,8 +19,8 @@ func Init(router *gin.Engine, middleware *jwt.GinJWTMiddleware) {
 	apiSolicitudavance := router.Group("/tesoreria")
 	//apiTipoavance.Use(middleware.MiddlewareFunc())
 
-	apiSolicitudavance.GET("/solicitudavance/:vigencia", List)
-	apiSolicitudavance.GET("/solicitudavance/:vigencia/:idSolicitud", FindOne)
+	apiSolicitudavance.GET("/solicitudavance/:opcion/:vigencia", List)
+	apiSolicitudavance.GET("/solicitudavance/:opcion/:vigencia/:idSolicitud", FindOne)
 	apiSolicitudavance.POST("/solicitudavance", Create)
 	//apiTipoavance.PUT("/tipoavance/:idtipo", Modify)
 	//apiTipoavance.PUT("/tipoavance", Modify)
@@ -31,13 +32,18 @@ func Init(router *gin.Engine, middleware *jwt.GinJWTMiddleware) {
 
 func List(c *gin.Context) {
 
+    opcion := strings.TrimSpace(c.Params.ByName("opcion"))
 	vigencia, _ := strconv.ParseInt(c.Params.ByName("vigencia"), 0, 64)
-	solicitudesavance, msg := solicitudavancerepository.FindAll(vigencia)
-	//consulta tipos de avance
-	if msg.Code != 0 {
-		c.JSON(200, msg)
-	} else {
-		c.JSON(200, solicitudesavance)
+
+	switch opcion {
+		case "secuencia":
+		    secuencia, msg := solicitudavancerepository.FindOneSecuencia(vigencia)
+		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, secuencia) }
+		default:
+		    solicitudesavance, msg := solicitudavancerepository.FindAll(vigencia)
+			if msg.Code != 0 {c.JSON(200, msg)} else {c.JSON(200, solicitudesavance)
+		}
+
 	}
 
 }
@@ -59,7 +65,7 @@ func FindOne(c *gin.Context) {
 func Create(c *gin.Context) {
 
 	var avanceins solicitudavance.Solicitud
-	
+//	fmt.Println("dat  :",avanceins)
 	 if c.Bind(&avanceins) == nil {
 	 		//validacion y registro de beneficiario
 	 		beneficiarioavanceins := avanceins.Beneficiario
@@ -134,6 +140,7 @@ func Create(c *gin.Context) {
 						c.JSON(200, utilidades.CheckInfo( "El Estado de la solicitud ya existe"))
 					}	
 				}
+				c.JSON(200, "Se registro la solicitud")
 	 		}else {
 	 		c.JSON(400, "NO se pudo rescatar datos") 
 	 		}
