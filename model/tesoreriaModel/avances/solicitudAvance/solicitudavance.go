@@ -93,6 +93,8 @@ type Solicitudtipoavance struct {
     Descripcion     string  `db:"descripcion" json:"Descripcion"`
     Valor       	float64 `db:"valor" json:"Valor" `
     Estado          string  `db:"estado" json:"Estado"`
+    Referencia      string  `db:"referencia" json:"Referencia"`
+    Nombre          string  `db:"nombre" json:"Nombre"`
  }
 
 

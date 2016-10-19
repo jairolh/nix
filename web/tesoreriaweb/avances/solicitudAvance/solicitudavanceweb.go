@@ -2,7 +2,7 @@ package solicitudavanceweb
 
 import (
 	
-	"fmt"
+	_"fmt"
 	"nix/utilidades"
 	"nix/model/tesoreriaModel/avances/solicitudAvance"
 	"nix/repository/tesoreriarepository/avances/solicitudAvance"
@@ -20,7 +20,7 @@ func Init(router *gin.Engine, middleware *jwt.GinJWTMiddleware) {
 	//apiTipoavance.Use(middleware.MiddlewareFunc())
 
 	apiSolicitudavance.GET("/solicitudavance/:opcion/:vigencia", List)
-	apiSolicitudavance.GET("/solicitudavance/:opcion/:vigencia/:idSolicitud", FindOne)
+	apiSolicitudavance.GET("/solicitudavance/:opcion/:vigencia/:idSolicitud/:idTipo", FindOne)
 	apiSolicitudavance.POST("/solicitudavance", Create)
 	//apiTipoavance.PUT("/tipoavance/:idtipo", Modify)
 	//apiTipoavance.PUT("/tipoavance", Modify)
@@ -50,16 +50,21 @@ func List(c *gin.Context) {
 
 func FindOne(c *gin.Context) {
 
-	tipoavanceid, _ := strconv.ParseInt(c.Params.ByName("idtipo"), 0, 64)
-	fmt.Println("IDW :",tipoavanceid)
-	/*tipoavance, msg := tipoavancerepository.FindOne(tipoavanceid)
+    opcion := strings.TrimSpace(c.Params.ByName("opcion"))
+	solicitud, _ := strconv.ParseInt(c.Params.ByName("idSolicitud"), 0, 64)
+	tipo, _ := strconv.ParseInt(c.Params.ByName("idTipo"), 0, 64)
 
-
-	if msg.Code != 0 {
-		c.JSON(200, msg)
-	} else {
-		c.JSON(200, tipoavance)
-	}*/
+	switch opcion {
+		case "avance":
+		    avance, msg := solicitudavancerepository.FindOne(solicitud)
+		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, avance) }
+		case "tiposAvance":
+		    tipos, msg := solicitudavancerepository.FindAllTipo(solicitud)
+		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, tipos) }
+		case "requisitosTiposAvance":
+		    requisitos, msg := solicitudavancerepository.FindAllReq(tipo)
+		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, requisitos) }
+		}
 }
 
 func Create(c *gin.Context) {

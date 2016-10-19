@@ -9,6 +9,7 @@ _"fmt"
 "nix/repository"
 "nix/model"
 "nix/model/tesoreriaModel/avances/solicitudAvance"
+"nix/model/tesoreriaModel/avances/requisitoTipoAvance"
 "nix/utilidades"
 )
 
@@ -168,7 +169,7 @@ func FindAll(vigencia int64) ([]solicitudavance.SolicitudGeneral, model.MessageR
     //fmt.Println("dat :",consulta,vigencia)
 	_, err := connectionDB.Select(&solicitudesavance, consulta,vigencia)
 
-	msg := utilidades.CheckErr(err, "Error consultando la solicitud de avance")
+	msg := utilidades.CheckErr(err, "Error consultando las solicitudes de avance")
 	return solicitudesavance, msg
 
 }
@@ -276,4 +277,64 @@ func FindOneEstado(estado solicitudavance.Estados) (solicitudavance.Estados, mod
 	err := connectionDB.SelectOne(&estados, consulta, estado.Nombre, estado.Proceso)
 	msg := utilidades.CheckErr(err, "No existe el estado")
 	return estados, msg
+}
+
+
+func FindOne(solicitud int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
+	var solicitudavance []solicitudavance.SolicitudGeneral
+	var consulta string
+	
+	consulta = "SELECT sol.id_solicitud, sol.id_beneficiario, sol.vigencia, sol.consecutivo, sol.objetivo, sol.justificacion, "
+    consulta = consulta+" sol.valor_total, sol.codigo_dependencia, sol.dependencia, sol.codigo_facultad, sol.facultad, "
+    consulta = consulta+" sol.codigo_proyecto_curricular, sol.proyecto_curricular, sol.codigo_convenio, sol.convenio, sol.codigo_proyecto_inv, sol.proyecto_inv, "
+    consulta = consulta+" est_av.id_estado, est_av.fecha_registro, est.nombre estado_actual, "
+    consulta = consulta+" bene.id_beneficiario, bene.nombres, bene.apellidos, bene.tipo_documento, bene.documento,  "
+    consulta = consulta+" bene.lugar_documento, bene.direccion, bene.correo, bene.telefono, bene.celular "
+    consulta = consulta+" FROM tesoreria.solicitud_avance sol  "
+    consulta = consulta+" INNER JOIN tesoreria.beneficiario bene ON bene.id_beneficiario=sol.id_beneficiario  "
+    consulta = consulta+" INNER JOIN tesoreria.estado_avance est_av ON est_av.id_solicitud=sol.id_solicitud  "
+    consulta = consulta+" INNER JOIN tesoreria.estados est ON est.id_estado=est_av.id_estado AND fecha_registro= "
+    consulta = consulta+" (SELECT MAX(fecha_registro) FROM tesoreria.estado_avance WHERE id_solicitud=est_av.id_solicitud)  "
+    consulta = consulta+" WHERE  sol.id_solicitud=$1 "
+    //fmt.Println("dat :",consulta,solicitud)
+	_, err := connectionDB.Select(&solicitudavance, consulta,solicitud)
+
+	msg := utilidades.CheckErr(err, "Error consultando la solicitud de avance")
+	return solicitudavance, msg
+
+}
+
+func FindAllTipo(solicitud  int64) ([]solicitudavance.Solicitudtipoavance, model.MessageReturn) {
+	var tipoSolicitud []solicitudavance.Solicitudtipoavance
+	var consulta string
+	
+	consulta = "SELECT tav.referencia,tav.nombre,sol.id_tipo, sol.id_solicitud, sol.descripcion, sol.valor, sol.estado "
+    consulta = consulta+" FROM tesoreria.solicitud_tipo_avance sol "
+    consulta = consulta+" INNER JOIN tesoreria.tipo_avance tav ON tav.id=sol.id_tipo "
+    consulta = consulta+" WHERE sol.id_solicitud=$1 "
+    //fmt.Println("dat :",consulta,solicitud)
+	_, err := connectionDB.Select(&tipoSolicitud, consulta,solicitud )
+
+	msg := utilidades.CheckErr(err, "Error consultando la solicitud de avance")
+	return  tipoSolicitud, msg
+
+}
+
+func FindAllReq(tipo int64) ([]requisitotipoavance.Requisito, model.MessageReturn) {
+	var requisitosSolicitud []requisitotipoavance.Requisito
+	var consulta string
+	
+	consulta = "SELECT req.id, req.referencia, req.nombre, req.descripcion, req.etapa, req.fecha_registro, "
+    consulta = consulta+" req.estado "
+    consulta = consulta+" FROM tesoreria.requisito_avance req "
+    consulta = consulta+" INNER JOIN tesoreria.requisito_tipo_avance reqav ON reqav.id_req=req.id and reqav.estado='A' "
+    consulta = consulta+" WHERE req.estado='A'  "
+    consulta = consulta+" and reqav.id_tipo IN ($1) "
+    consulta = consulta+" ORDER BY req.etapa DESC, req.referencia ASC "
+    //fmt.Println("dat :",consulta,tipo)
+	_, err := connectionDB.Select(&requisitosSolicitud , consulta,tipo)
+
+	msg := utilidades.CheckErr(err, "Error consultando los requisitos para la solicitud de avance")
+	return requisitosSolicitud, msg
+
 }
