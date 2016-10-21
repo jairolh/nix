@@ -280,7 +280,7 @@ func FindOneEstado(estado solicitudavance.Estados) (solicitudavance.Estados, mod
 }
 
 
-func FindOne(solicitud int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
+func FindOne(vigencia int64,solicitud int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
 	var solicitudavance []solicitudavance.SolicitudGeneral
 	var consulta string
 	
@@ -295,9 +295,10 @@ func FindOne(solicitud int64) ([]solicitudavance.SolicitudGeneral, model.Message
     consulta = consulta+" INNER JOIN tesoreria.estado_avance est_av ON est_av.id_solicitud=sol.id_solicitud  "
     consulta = consulta+" INNER JOIN tesoreria.estados est ON est.id_estado=est_av.id_estado AND fecha_registro= "
     consulta = consulta+" (SELECT MAX(fecha_registro) FROM tesoreria.estado_avance WHERE id_solicitud=est_av.id_solicitud)  "
-    consulta = consulta+" WHERE  sol.id_solicitud=$1 "
+    consulta = consulta+" WHERE  sol.vigencia=$1 "
+    consulta = consulta+" AND    sol.consecutivo=$2 "
     //fmt.Println("dat :",consulta,solicitud)
-	_, err := connectionDB.Select(&solicitudavance, consulta,solicitud)
+	_, err := connectionDB.Select(&solicitudavance, consulta,vigencia,solicitud)
 
 	msg := utilidades.CheckErr(err, "Error consultando la solicitud de avance")
 	return solicitudavance, msg

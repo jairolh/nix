@@ -51,12 +51,13 @@ func List(c *gin.Context) {
 func FindOne(c *gin.Context) {
 
     opcion := strings.TrimSpace(c.Params.ByName("opcion"))
+    vigencia, _ := strconv.ParseInt(c.Params.ByName("vigencia"), 0, 64)
 	solicitud, _ := strconv.ParseInt(c.Params.ByName("idSolicitud"), 0, 64)
 	tipo, _ := strconv.ParseInt(c.Params.ByName("idTipo"), 0, 64)
 
 	switch opcion {
-		case "avance":
-		    avance, msg := solicitudavancerepository.FindOne(solicitud)
+		case "solicitud":
+		    avance, msg := solicitudavancerepository.FindOne(vigencia,solicitud)
 		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, avance) }
 		case "tiposAvance":
 		    tipos, msg := solicitudavancerepository.FindAllTipo(solicitud)

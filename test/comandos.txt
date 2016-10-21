@@ -22,7 +22,7 @@ curl -i -X POST -H "Content-Type: application/json" -d "{\"Beneficiario\":{\"IdB
 /*listar solicitudes*/
 curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/lista/2016
 /*buscar solicitud*/
-curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/avance/2016/5/0
+curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/solicitud/2016/5/0
 /*buscar los tipos de avance de la solicitud*/
 curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/tiposAvance/2016/5/0
 /*buscar los requisitos por tipos de avance de la solicitud*/
