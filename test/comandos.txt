@@ -21,7 +21,12 @@ curl -i -X POST -H "Content-Type: application/json" -d "{\"Beneficiario\":{\"IdB
 
 /* Solicitud tipo avance*/
 
-curl -i -X POST -H "Content-Type: application/json" -d "{\"Solicitud\":{\"IdSolicitud\": 1 ,\"Vigencia\": \"2016\" ,\"Consecutivo\": \"21\" ,\"Objetivo\": \"prueba 1\" ,\"Justificacion\": \"justifica 1\" } , \"Tipoavance\":{\"IdTipo\": 10,\"Descripcion\": \"descr prueba1\" ,\"Valor\": 111} }" http://localhost:8088/tesoreria/solicitudavance/tipoavance
+curl -i -X POST -H "Content-Type: application/json" -d "{\"Solicitud\":{\"IdSolicitud\": 25 ,\"Vigencia\": \"2016\" ,\"Consecutivo\": \"21\" ,\"Objetivo\": \"prueba 1\" ,\"Justificacion\": \"justifica 1\" } , \"Tipoavance\":{\"IdTipo\": 2,\"Descripcion\": \"descr prueba1\" ,\"Valor\": 111} }" http://localhost:8088/tesoreria/solicitudavance/tipoavance
+
+
+/* verifica avance*/
+
+curl -i -X POST -H "Content-Type: application/json" -d "[{\"IdTipo\":3,\"IdReq\":1,\"IdSolicitud\":28,\"Estado\":\"A\",\"ReferenciaAvn\":\"PRL\",\"NombreAvn\":\"Practica Laboratorio\",\"Valido\":\"S\",\"Observaciones\":\"1\",\"FechaRegistroReq\":\"\",\"Documento\":\"\",\"EstadoReq\":\"\",\"UbicacionDoc\":\"\"},{\"IdTipo\":2,\"IdReq\":4,\"IdSolicitud\":28,\"Estado\":\"A\",\"ReferenciaAvn\":\"LB\",\"NombreAvn\":\"Labotarorios\",\"Valido\":\"S\",\"Observaciones\":\"2\",\"FechaRegistroReq\":\"\",\"Documento\":\"\",\"EstadoReq\":\"\",\"UbicacionDoc\":\"\"},{\"IdTipo\":2,\"IdReq\":3,\"IdSolicitud\":28,\"Estado\":\"A\",\"ReferenciaAvn\":\"LB\",\"NombreAvn\":\"Labotarorios\",\"Valido\":\"S\",\"Observaciones\":\"3\",\"FechaRegistroReq\":\"\",\"Documento\":\"\",\"EstadoReq\":\"\",\"UbicacionDoc\":\"\"},{\"IdTipo\":1,\"IdReq\":1,\"IdSolicitud\":28,\"Estado\":\"A\",\"ReferenciaAvn\":\"SP\",\"NombreAvn\":\"Salida Pedagogica\",\"Valido\":\"S\",\"Observaciones\":\"4\",\"FechaRegistroReq\":\"\",\"Documento\":\"\",\"EstadoReq\":\"\",\"UbicacionDoc\":\"\"}]" http://localhost:8088/tesoreria/solicitudavance/verificaavance
 
 
 /*listar solicitudes*/
@@ -32,3 +37,5 @@ curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/solicitud/2016/5/
 curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/tiposAvance/2016/5/0
 /*buscar los requisitos por tipos de avance de la solicitud*/
 curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/requisitosTiposAvance/2016/5/1
+/*buscar los requisitos validados por tipos de avance de la solicitud*/
+curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/requisitosSolicitudAvance/2016/5/1

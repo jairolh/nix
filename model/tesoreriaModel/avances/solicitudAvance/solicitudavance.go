@@ -122,6 +122,29 @@ type Estados struct {
     Proceso         string  `db:"proceso" json:"Proceso"`
 }
 
+type RequisitoSolicitudavance struct {
+    // db tag lets you specify the column name if it differs from the struct field
+    IdTipo         int64   `db:"id_tipo" json:"IdTipo" `
+    IdReq          int64   `db:"id_req"  json:"IdReq" `
+    Estado         string  `db:"estado"  json:"Estado"`
+    FechaRegistro  string  `db:"fecha_registro" json:"FechaRegistro"`
+    ReferenciaAvn  string  `db:"referenciaavn" json:"ReferenciaAvn"`
+    NombreAvn      string  `db:"nombreavn" json:"NombreAvn"`
+    ReferenciaReq  string  `db:"referenciareq" json:"ReferenciaReq"`
+    NombreReq      string  `db:"nombrereq" json:"NombreReq"`
+    DescripcionReq string  `db:"descripcionreq" json:"DescripcionReq"`
+    EtapaReq       string  `db:"etapareq" json:"EtapaReq"`
+    IdSolicitud      int64   `db:"id_solicitud" json:"IdSolicitud" `
+    Valido           string  `db:"valido"  json:"Valido"`
+    Observaciones    string  `db:"observacionesreqav"  json:"Observaciones"`
+    FechaRegistroReq string  `db:"fecha_registro_reqav"  json:"FechaRegistroReq"`
+    Documento        string  `db:"Documento"  json:"documento"`
+    EstadoReq        string  `db:"estado_reqav"  json:"EstadoReq"`
+    UbicacionDoc     string  `db:"ubicacion_doc"  json:"UbicacionDoc"`
+    Usuario          string  `db:"usuario"  json:"Usuario"`
+    
+}
+
 /*
 func GetNewTipoavance (Id_tipoAux int64, ReferenciaAux string, NombreAux string,DescripcionAux string, EstadoAux string, Fecha_registroAux string) Tipoavance{
 	return Tipoavance{Id_tipo:Id_tipoAux,  Referencia:ReferenciaAux , Nombre:NombreAux ,Descripcion:DescripcionAux , Estado:EstadoAux string, Fecha_registro:Fecha_registroAux}

@@ -92,6 +92,22 @@ func CreateBeneficiarioAvance(beneficiarioavanceIns solicitudavance.Beneficiario
 		}
 	return msg
 }
+
+func CreateVerificaSolicitud(verificaavanceIns solicitudavance.RequisitoSolicitudavance) model.MessageReturn{
+	var consultaIns string 
+	consultaIns = "INSERT INTO tesoreria.solicitud_requisito_tipo_avance "
+    consultaIns = consultaIns+" (id_tipo, id_req, id_solicitud, valido, observaciones, fecha_registro,"
+    consultaIns = consultaIns+"  documento, estado, ubicacion_doc) "
+    consultaIns = consultaIns+" VALUES ($1,$2,$3,$4,$5,$6,$7,'A',$8) ";
+	_, err := connectionDB.Exec(consultaIns,verificaavanceIns.IdTipo,verificaavanceIns.IdReq,verificaavanceIns.IdSolicitud, verificaavanceIns.Valido,
+    verificaavanceIns.Observaciones, verificaavanceIns.FechaRegistroReq,verificaavanceIns.Documento,verificaavanceIns.UbicacionDoc)
+	msg := utilidades.CheckErr(err, "Error Insertando la verificacion de avance")
+	if msg.Code == 0{
+		return utilidades.CheckInfo("Se registro la verificacion de requisito exitosamente.")
+	 }
+
+	return msg
+}
 /*
 func Update(tipoavanceUpd tipoavance.Tipoavance) model.MessageReturn {
 	//_, err := connectionDB.Update(&tipoavance)
@@ -334,6 +350,34 @@ func FindAllReq(tipo int64) ([]requisitotipoavance.Requisito, model.MessageRetur
     consulta = consulta+" ORDER BY req.etapa DESC, req.referencia ASC "
     //fmt.Println("dat :",consulta,tipo)
 	_, err := connectionDB.Select(&requisitosSolicitud , consulta,tipo)
+
+	msg := utilidades.CheckErr(err, "Error consultando los requisitos para la solicitud de avance")
+	return requisitosSolicitud, msg
+
+}
+
+func FindAllReqAvn(solicitud int64,tipo int64) ([]solicitudavance.RequisitoSolicitudavance, model.MessageReturn) {
+	var requisitosSolicitud []solicitudavance.RequisitoSolicitudavance
+	var consulta string
+	
+	consulta = " SELECT  req.referencia referenciareq, req.nombre nombrereq, req.descripcion descripcionreq, req.etapa etapareq, req.fecha_registro,  req.estado, "
+    consulta = consulta+" reqav.id_tipo, reqav.id_req, $1 id_solicitud, "
+    consulta = consulta+" (CASE WHEN rqsav.valido IS NULL THEN '' ELSE rqsav.valido END ) valido, "
+    consulta = consulta+" (CASE WHEN rqsav.observaciones IS NULL THEN '' ELSE rqsav.observaciones END ) observacionesreqav, "
+    //consulta = consulta+" rqsav.fecha_registro fecha_registro_reqav, "
+    consulta = consulta+" (CASE WHEN rqsav.fecha_registro IS NULL THEN '2000-01-01' ELSE rqsav.fecha_registro END ) fecha_registro_reqav, "
+    consulta = consulta+" (CASE WHEN rqsav.documento IS NULL THEN '' ELSE rqsav.documento END ) documento, "
+    consulta = consulta+" (CASE WHEN rqsav.estado IS NULL THEN '' ELSE rqsav.estado END )estado_reqav, "
+    consulta = consulta+" (CASE WHEN rqsav.ubicacion_doc IS NULL THEN '' ELSE rqsav.ubicacion_doc END ) ubicacion_doc, "
+    consulta = consulta+" 'system' usuario "
+    //consulta = consulta+" rqsav.fecha_registro fecha_registro_reqav, rqsav.documento, rqsav.estado estado_reqav, rqsav.ubicacion_doc "
+    consulta = consulta+" FROM tesoreria.requisito_avance req   "
+    consulta = consulta+" INNER JOIN tesoreria.requisito_tipo_avance reqav ON reqav.id_req=req.id and reqav.estado='A'  "
+    consulta = consulta+" LEFT OUTER JOIN tesoreria.solicitud_requisito_tipo_avance rqsav ON rqsav.id_solicitud=$1 AND rqsav.id_tipo=reqav.id_tipo AND rqsav.id_req=reqav.id_req and rqsav.estado='A' "
+    consulta = consulta+" WHERE req.estado='A' and reqav.id_tipo IN ($2)  ORDER BY req.etapa DESC, req.referencia ASC  "
+    
+    //fmt.Println("dat :",consulta,solicitud,tipo)
+	_, err := connectionDB.Select(&requisitosSolicitud , consulta, solicitud, tipo)
 
 	msg := utilidades.CheckErr(err, "Error consultando los requisitos para la solicitud de avance")
 	return requisitosSolicitud, msg

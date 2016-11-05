@@ -2,12 +2,13 @@ package solicitudavanceweb
 
 import (
 	
-	_"fmt"
+	"fmt"
 	"nix/utilidades"
 	"nix/model/tesoreriaModel/avances/solicitudAvance"
 	"nix/repository/tesoreriarepository/avances/solicitudAvance"
 	"strconv"
 	"strings"
+	"time"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	_"encoding/json"
@@ -27,7 +28,7 @@ func Init(router *gin.Engine, middleware *jwt.GinJWTMiddleware) {
 	//apiTipoavance.DELETE("/tipoavance/:idtipo", Delete)
 	apiSolicitudavance.OPTIONS("/solicitudavance/:opcion", Options) 
 	solicitudavancerepository.Init()
-
+	fmt.Println("")
 }
 
 func List(c *gin.Context) {
@@ -65,6 +66,9 @@ func FindOne(c *gin.Context) {
 		case "requisitosTiposAvance":
 		    requisitos, msg := solicitudavancerepository.FindAllReq(tipo)
 		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, requisitos) }
+		case "requisitosSolicitudAvance":
+		    requisitosAvn, msg := solicitudavancerepository.FindAllReqAvn(solicitud,tipo)
+		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, requisitosAvn) }
 		}
 }
 
@@ -166,7 +170,46 @@ switch opcion {
 							} else {
 								c.JSON(200, utilidades.CheckInfo( "El tipo de avance ya existe"))
 							}
-				}//fin if- tipoavance					
+				}//fin if- tipoavance	
+			case "verificaavance":
+				 var verificains []solicitudavance.RequisitoSolicitudavance
+				 if c.Bind(&verificains) == nil {
+				 	//fmt.Println("IDS :",verificains)
+				 	fecha_registro:= time.Now().Format("2006-01-02 15:04:05")
+				 	for i := 0; i < len(verificains); i += 1 {
+					    registro := verificains [i]
+					    registro.FechaRegistroReq =fecha_registro;
+					    msgIns := solicitudavancerepository.CreateVerificaSolicitud(registro)
+						c.JSON(200, msgIns)
+						}
+
+					var IdEst int64	
+					var consultaEstado solicitudavance.Estados	
+					consultaEstado.Nombre = "verificado"
+					consultaEstado.Proceso = "avances"
+					resEstado, msgEst := solicitudavancerepository.FindOneEstado(consultaEstado)
+					if msgEst.Code != 0 {
+						IdEst=0
+					} else {
+						//c.JSON(200, resEstado)
+						IdEst=resEstado.IdEstado
+					}
+					//validacion y registro de estados de la solicitud de avance
+					var estadosolicitudavanceins solicitudavance.Estadosolicitudavance
+					estadosolicitudavanceins.IdSolicitud = verificains[0].IdSolicitud
+					estadosolicitudavanceins.IdEstado=IdEst
+					estadosolicitudavanceins.Observaciones="Verificados de los requisitos de la solicitud de avance"
+					estadosolicitudavanceins.Usuario = verificains[0].Usuario
+					_, msgEstAv := solicitudavancerepository.FindOneEstadoAvance(estadosolicitudavanceins)
+					if msgEstAv.Code != 0 {
+						//registra estados
+							msgIns := solicitudavancerepository.CreateEstadoSolicitud(estadosolicitudavanceins)
+							c.JSON(200, msgIns)
+						} else {
+							c.JSON(200, utilidades.CheckInfo( "El Estado de la solicitud ya existe"))
+						}	
+					c.JSON(200, "Se registro la verficacion de la solicitud")	
+				}//fin if- verificaavance								
 			}//fin switch
 
 }
