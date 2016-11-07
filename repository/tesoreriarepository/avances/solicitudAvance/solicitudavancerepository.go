@@ -4,7 +4,6 @@ import(
 
 _"fmt"
 "time"
-
 "gopkg.in/gorp.v1"
 "nix/repository"
 "nix/model"
@@ -20,7 +19,6 @@ func Init() {
 }
 
 func CreateSolicitud(solicitudavanceIns solicitudavance.Solicitudavance) model.MessageReturn{
-
 	var consultaIns string 
 	consultaIns = "INSERT INTO tesoreria.solicitud_avance"
     consultaIns = consultaIns+" (id_solicitud, id_beneficiario, vigencia, consecutivo, "
@@ -45,7 +43,6 @@ func CreateSolicitud(solicitudavanceIns solicitudavance.Solicitudavance) model.M
 }
 
 func CreateSolicitudTipo(solicitudtipoavanceIns solicitudavance.Solicitudtipoavance) model.MessageReturn{
-
 	var consultaIns string 
 	consultaIns = "INSERT INTO tesoreria.solicitud_tipo_avance"
     consultaIns = consultaIns+"( id_solicitud, id_tipo, descripcion, valor, estado) "
@@ -60,7 +57,6 @@ func CreateSolicitudTipo(solicitudtipoavanceIns solicitudavance.Solicitudtipoava
 }
 
 func CreateEstadoSolicitud(estadosolicitudavanceIns solicitudavance.Estadosolicitudavance) model.MessageReturn{
-
 	estadosolicitudavanceIns.FechaRegistro= time.Now().Format("2006-01-02 15:04:05")
 	//err := connectionDB.Insert(&tipoavance)
 	var consultaIns string 
@@ -115,60 +111,37 @@ func Update(tipoavanceUpd tipoavance.Tipoavance) model.MessageReturn {
     consultaUpd = "UPDATE tesoreria.tipo_avance SET referencia=$1, nombre=$2, descripcion=$3, estado=$4 WHERE id=$5"
     _, err := connectionDB.Exec(consultaUpd, tipoavanceUpd.Referencia, tipoavanceUpd.Nombre, tipoavanceUpd.Descripcion,tipoavanceUpd.Estado,tipoavanceUpd.IdTipo)
 	msg := utilidades.CheckErr(err, "Error Actualizando el tipo de avance")
-
 	if msg.Code == 0{
 		return utilidades.CheckInfo(" Se Actualizo el tipo de avance exitosamente.")
 	}
-
 	return msg
 }
-
-
-
-
 func Delete(id int64) model.MessageReturn{
-
 	//consulta primero para ver si el registro existe
 	var tipoavanceDel tipoavance.Tipoavance
 	var consulta,consultaDel string
 	consulta = "SELECT * FROM tesoreria.tipo_avance tav where tav.id=$1"
 	err := connectionDB.SelectOne(&tipoavanceDel, consulta, id)
     msg := utilidades.CheckErr(err, "No se encontro registro Pre eliminacion")
-
     if msg.Code != 0{
 		return msg
 	}
-
     //se elimina registro
     consultaDel = "DELETE FROM tesoreria.tipo_avance tav where tav.id=$1"
     //fmt.Println("DEL :",consultaDel)
 	_, err = connectionDB.Exec(consultaDel, id)
 	//_, err = connectionDB.Delete(&tipoavanceDel)
     msg = utilidades.CheckErr(err, "Error Eliminando registro")
-
     if msg.Code != 0{
 		return msg
 	}else{
 		return utilidades.CheckInfo(" Se Elimino el tipo de avance exitosamente.")
 	}
-
-}
-
-func FindOne( id int64) (tipoavance.Tipoavance, model.MessageReturn) {
-	var tipoavance tipoavance.Tipoavance
-    var consulta string
-	consulta = "SELECT * FROM tesoreria.tipo_avance tav where tav.id=$1"
-	err := connectionDB.SelectOne(&tipoavance, consulta, id)
-	msg := utilidades.CheckErr(err, "Error consultando el tipo de avance por ID")
-
-	return tipoavance, msg
-}
-*/
+}*/
 
 func FindAll(vigencia int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
 	var solicitudesavance []solicitudavance.SolicitudGeneral
 	var consulta string
-	
 	consulta = "SELECT sol.id_solicitud, sol.id_beneficiario, sol.vigencia, sol.consecutivo, sol.objetivo, "
     consulta = consulta+" sol.justificacion, sol.valor_total, sol.codigo_dependencia, sol.dependencia, "
     consulta = consulta+" sol.codigo_facultad, sol.facultad, sol.codigo_proyecto_curricular, sol.proyecto_curricular, "
@@ -184,7 +157,6 @@ func FindAll(vigencia int64) ([]solicitudavance.SolicitudGeneral, model.MessageR
     consulta = consulta+" ORDER BY sol.vigencia DESC, sol.consecutivo::int DESC"
     //fmt.Println("dat :",consulta,vigencia)
 	_, err := connectionDB.Select(&solicitudesavance, consulta,vigencia)
-
 	msg := utilidades.CheckErr(err, "Error consultando las solicitudes de avance")
 	return solicitudesavance, msg
 
@@ -192,10 +164,8 @@ func FindAll(vigencia int64) ([]solicitudavance.SolicitudGeneral, model.MessageR
 
 
 func FindOneBeneficiario(beneficiario solicitudavance.Beneficiario) (solicitudavance.Beneficiario, model.MessageReturn) {	
-	
 	idBene:=beneficiario.IdBeneficiario
 	doc:=beneficiario.Documento
-	
 	var beneficiarioavance solicitudavance.Beneficiario
     var consulta string
 	consulta = "SELECT bene.id_beneficiario, bene.nombres, bene.apellidos, bene.tipo_documento, bene.documento,"
@@ -212,27 +182,22 @@ func FindOneBeneficiario(beneficiario solicitudavance.Beneficiario) (solicitudav
 }
 
 func FindOneSecuencia(vigencia int64) ([]solicitudavance.Consecutivoavance, model.MessageReturn) {
-
     var secuenciaAvance []solicitudavance.Consecutivoavance
 	var consulta string
-	
 	consulta = "SELECT "
 	consulta = consulta+" (CASE WHEN MAX(sol.consecutivo::int) is null THEN '0' else MAX(sol.consecutivo::int) END ) consecutivo"
     consulta = consulta+" FROM tesoreria.solicitud_avance sol"
     consulta = consulta+" WHERE sol.vigencia=$1 "
     //consulta = consulta+" GROUP BY sol.vigencia "
      //fmt.Println("datSQL :",consulta,solicitud.Vigencia,solicitud.Consecutivo)
-    //secuenciaAvance, err := connectionDB.Exec(consulta,vigencia)
     _, err := connectionDB.Select(&secuenciaAvance, consulta,vigencia)
 	msg := utilidades.CheckErr(err, "No existe la solicitud en la DB")
 	return secuenciaAvance, msg
 }
 
 func FindOneSolicitudSec(solicitud solicitudavance.Solicitudavance) (solicitudavance.Solicitudavance, model.MessageReturn) {	
-
     var solicitudavance solicitudavance.Solicitudavance
 	var consulta string
-	
 	consulta = "SELECT sol.id_solicitud, sol.id_beneficiario, sol.vigencia, sol.consecutivo, sol.objetivo, "
     consulta = consulta+" sol.justificacion, sol.valor_total, sol.codigo_dependencia, sol.dependencia, "
     consulta = consulta+" sol.codigo_facultad, sol.facultad, sol.codigo_proyecto_curricular, sol.proyecto_curricular, "
@@ -248,7 +213,6 @@ func FindOneSolicitudSec(solicitud solicitudavance.Solicitudavance) (solicitudav
 }
 
 func FindOneSolicitudTipoAvance(tipoavance solicitudavance.Solicitudtipoavance) (solicitudavance.Solicitudtipoavance, model.MessageReturn) {	
-
 	var solicitudtipoavance solicitudavance.Solicitudtipoavance
 	var consulta string
 	consulta = "SELECT tipo.id_solicitud, tipo.id_tipo, tipo.descripcion, tipo.valor, tipo.estado"
@@ -264,11 +228,11 @@ func FindOneSolicitudTipoAvance(tipoavance solicitudavance.Solicitudtipoavance) 
 
 
 func FindOneEstadoAvance(estadosolicitud solicitudavance.Estadosolicitudavance) (solicitudavance.Estadosolicitudavance, model.MessageReturn) {	
-
 	var estadosolicitudes solicitudavance.Estadosolicitudavance
 	var consulta string
-  	consulta = " SELECT est_av.id_estado, est_av.id_solicitud, est_av.fecha_registro, est_av.observaciones, est_av.usuario, est_av.estado"
+  	consulta = " SELECT est_av.id_estado, est_av.id_solicitud, est_av.fecha_registro, est_av.observaciones, est_av.usuario, est_av.estado, est.nombre nombre_estado"
     consulta = consulta+" FROM tesoreria.estado_avance est_av"
+    consulta = consulta+" INNER JOIN tesoreria.estados est ON est.id_estado=est_av.id_estado "
 	consulta = consulta+" WHERE est_av.id_solicitud=$1 "
     consulta = consulta+" AND est_av.id_estado=$2 "
     consulta = consulta+" AND est_av.estado='A' "
@@ -279,8 +243,26 @@ func FindOneEstadoAvance(estadosolicitud solicitudavance.Estadosolicitudavance) 
 	return estadosolicitudes, msg
 }
 
-func FindOneEstado(estado solicitudavance.Estados) (solicitudavance.Estados, model.MessageReturn) {	
+func FindEstadoAvanceBeneficiario(solicitud int64, beneficiario int64) ([]solicitudavance.Estadosolicitudavance, model.MessageReturn) {	
+	var estadosolicitudes []solicitudavance.Estadosolicitudavance
+	var consulta string
+  	consulta = " SELECT DISTINCT est_av.id_estado, est_av.id_solicitud, est_av.fecha_registro, est_av.observaciones,  "
+	consulta = consulta+" est_av.usuario, est_av.estado, est.nombre nombre_estado "
+	consulta = consulta+" FROM tesoreria.solicitud_avance sol   "
+	consulta = consulta+" INNER JOIN tesoreria.estado_avance est_av ON est_av.id_solicitud=sol.id_solicitud  "
+	consulta = consulta+" INNER JOIN tesoreria.estados est ON est.id_estado=est_av.id_estado AND fecha_registro=  "
+	consulta = consulta+" (SELECT MAX(fecha_registro) FROM tesoreria.estado_avance WHERE id_solicitud=est_av.id_solicitud)   "
+	consulta = consulta+" WHERE sol.id_beneficiario=$2 "
+	consulta = consulta+" AND est_av.id_solicitud NOT IN ($1)  "
+	consulta = consulta+" AND est_av.estado='A'  "
+	consulta = consulta+" ORDER BY est_av.id_solicitud " 
+	//fmt.Println("datSQL :",consulta, solicitud , beneficiario)
+    _, err := connectionDB.Select(&estadosolicitudes, consulta, solicitud , beneficiario)
+	msg := utilidades.CheckErr(err, "No exite registro de avances para el beneficiario")
+	return estadosolicitudes, msg
+}
 
+func FindOneEstado(estado solicitudavance.Estados) (solicitudavance.Estados, model.MessageReturn) {	
 	var estados solicitudavance.Estados
 	var consulta string
 	consulta = " SELECT id_estado, nombre, descripcion, estado, proceso"
@@ -299,7 +281,6 @@ func FindOneEstado(estado solicitudavance.Estados) (solicitudavance.Estados, mod
 func FindOne(vigencia int64,solicitud int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
 	var solicitudavance []solicitudavance.SolicitudGeneral
 	var consulta string
-	
 	consulta = "SELECT sol.id_solicitud, sol.id_beneficiario, sol.vigencia, sol.consecutivo, sol.objetivo, sol.justificacion, "
     consulta = consulta+" sol.valor_total, sol.codigo_dependencia, sol.dependencia, sol.codigo_facultad, sol.facultad, "
     consulta = consulta+" sol.codigo_proyecto_curricular, sol.proyecto_curricular, sol.codigo_convenio, sol.convenio, sol.codigo_proyecto_inv, sol.proyecto_inv, "
@@ -324,14 +305,12 @@ func FindOne(vigencia int64,solicitud int64) ([]solicitudavance.SolicitudGeneral
 func FindAllTipo(solicitud  int64) ([]solicitudavance.Solicitudtipoavance, model.MessageReturn) {
 	var tipoSolicitud []solicitudavance.Solicitudtipoavance
 	var consulta string
-	
 	consulta = "SELECT tav.referencia,tav.nombre,sol.id_tipo, sol.id_solicitud, sol.descripcion, sol.valor, sol.estado "
     consulta = consulta+" FROM tesoreria.solicitud_tipo_avance sol "
     consulta = consulta+" INNER JOIN tesoreria.tipo_avance tav ON tav.id=sol.id_tipo "
     consulta = consulta+" WHERE sol.id_solicitud=$1 "
     //fmt.Println("dat :",consulta,solicitud)
 	_, err := connectionDB.Select(&tipoSolicitud, consulta,solicitud )
-
 	msg := utilidades.CheckErr(err, "Error consultando la solicitud de avance")
 	return  tipoSolicitud, msg
 
@@ -340,7 +319,6 @@ func FindAllTipo(solicitud  int64) ([]solicitudavance.Solicitudtipoavance, model
 func FindAllReq(tipo int64) ([]requisitotipoavance.Requisito, model.MessageReturn) {
 	var requisitosSolicitud []requisitotipoavance.Requisito
 	var consulta string
-	
 	consulta = "SELECT req.id, req.referencia, req.nombre, req.descripcion, req.etapa, req.fecha_registro, "
     consulta = consulta+" req.estado "
     consulta = consulta+" FROM tesoreria.requisito_avance req "
@@ -350,7 +328,6 @@ func FindAllReq(tipo int64) ([]requisitotipoavance.Requisito, model.MessageRetur
     consulta = consulta+" ORDER BY req.etapa DESC, req.referencia ASC "
     //fmt.Println("dat :",consulta,tipo)
 	_, err := connectionDB.Select(&requisitosSolicitud , consulta,tipo)
-
 	msg := utilidades.CheckErr(err, "Error consultando los requisitos para la solicitud de avance")
 	return requisitosSolicitud, msg
 
@@ -359,26 +336,21 @@ func FindAllReq(tipo int64) ([]requisitotipoavance.Requisito, model.MessageRetur
 func FindAllReqAvn(solicitud int64,tipo int64) ([]solicitudavance.RequisitoSolicitudavance, model.MessageReturn) {
 	var requisitosSolicitud []solicitudavance.RequisitoSolicitudavance
 	var consulta string
-	
 	consulta = " SELECT  req.referencia referenciareq, req.nombre nombrereq, req.descripcion descripcionreq, req.etapa etapareq, req.fecha_registro,  req.estado, "
     consulta = consulta+" reqav.id_tipo, reqav.id_req, $1 id_solicitud, "
     consulta = consulta+" (CASE WHEN rqsav.valido IS NULL THEN '' ELSE rqsav.valido END ) valido, "
     consulta = consulta+" (CASE WHEN rqsav.observaciones IS NULL THEN '' ELSE rqsav.observaciones END ) observacionesreqav, "
-    //consulta = consulta+" rqsav.fecha_registro fecha_registro_reqav, "
     consulta = consulta+" (CASE WHEN rqsav.fecha_registro IS NULL THEN '2000-01-01' ELSE rqsav.fecha_registro END ) fecha_registro_reqav, "
     consulta = consulta+" (CASE WHEN rqsav.documento IS NULL THEN '' ELSE rqsav.documento END ) documento, "
     consulta = consulta+" (CASE WHEN rqsav.estado IS NULL THEN '' ELSE rqsav.estado END )estado_reqav, "
     consulta = consulta+" (CASE WHEN rqsav.ubicacion_doc IS NULL THEN '' ELSE rqsav.ubicacion_doc END ) ubicacion_doc, "
     consulta = consulta+" 'system' usuario "
-    //consulta = consulta+" rqsav.fecha_registro fecha_registro_reqav, rqsav.documento, rqsav.estado estado_reqav, rqsav.ubicacion_doc "
     consulta = consulta+" FROM tesoreria.requisito_avance req   "
     consulta = consulta+" INNER JOIN tesoreria.requisito_tipo_avance reqav ON reqav.id_req=req.id and reqav.estado='A'  "
     consulta = consulta+" LEFT OUTER JOIN tesoreria.solicitud_requisito_tipo_avance rqsav ON rqsav.id_solicitud=$1 AND rqsav.id_tipo=reqav.id_tipo AND rqsav.id_req=reqav.id_req and rqsav.estado='A' "
     consulta = consulta+" WHERE req.estado='A' and reqav.id_tipo IN ($2)  ORDER BY req.etapa DESC, req.referencia ASC  "
-    
     //fmt.Println("dat :",consulta,solicitud,tipo)
 	_, err := connectionDB.Select(&requisitosSolicitud , consulta, solicitud, tipo)
-
 	msg := utilidades.CheckErr(err, "Error consultando los requisitos para la solicitud de avance")
 	return requisitosSolicitud, msg
 

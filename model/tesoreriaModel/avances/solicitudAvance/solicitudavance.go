@@ -84,6 +84,7 @@ type Estadosolicitudavance struct {
     Observaciones   string  `db:"observaciones" json:"Observaciones"`
     Usuario         string  `db:"usuario" json:"Usuario"`
     Estado          string  `db:"estado" json:"Estado"`
+    NombreEstado    string  `db:"nombre_estado" json:"NombreEstado"`
 }
 
 type Solicitudtipoavance struct {

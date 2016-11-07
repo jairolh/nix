@@ -69,6 +69,9 @@ func FindOne(c *gin.Context) {
 		case "requisitosSolicitudAvance":
 		    requisitosAvn, msg := solicitudavancerepository.FindAllReqAvn(solicitud,tipo)
 		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, requisitosAvn) }
+		case "solicitudAvanceBeneficiario":
+		    beneficiarioAvn, msg := solicitudavancerepository.FindEstadoAvanceBeneficiario(solicitud,tipo)
+		    if msg.Code != 0 { c.JSON(200, msg) }  else {c.JSON(200, beneficiarioAvn) }    
 		}
 }
 
