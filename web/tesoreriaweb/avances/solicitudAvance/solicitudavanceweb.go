@@ -212,11 +212,43 @@ switch opcion {
 							c.JSON(200, utilidades.CheckInfo( "El Estado de la solicitud ya existe"))
 						}	
 					c.JSON(200, "Se registro la verficacion de la solicitud")	
-				}//fin if- verificaavance								
+				}//fin if- verificaavance
+			case "cancelavance":
+				 var avanceins solicitudavance.Estadosolicitudavance
+				 if c.Bind(&avanceins) == nil {
+				 	//fmt.Println("IDS :",avanceins)
+				 	var IdEst int64	
+					var consultaEstado solicitudavance.Estados	
+					consultaEstado.Nombre = "cancelado"
+					consultaEstado.Proceso = "avances"
+					resEstado, msgEst := solicitudavancerepository.FindOneEstado(consultaEstado)
+					if msgEst.Code != 0 {
+						IdEst=0
+					} else {
+						//c.JSON(200, resEstado)
+						IdEst=resEstado.IdEstado
+					}
+					//validacion y registro de estados de la solicitud de avance
+					var estadosolicitudavanceins solicitudavance.Estadosolicitudavance
+					estadosolicitudavanceins.IdSolicitud = avanceins.IdSolicitud
+					estadosolicitudavanceins.IdEstado=IdEst
+					estadosolicitudavanceins.Observaciones=avanceins.Observaciones
+					estadosolicitudavanceins.Usuario = avanceins.Usuario
+					//fmt.Println("CAN :",estadosolicitudavanceins)
+					_, msgEstAv := solicitudavancerepository.FindOneEstadoAvance(estadosolicitudavanceins)
+					if msgEstAv.Code != 0 {
+						//registra estados
+							msgIns := solicitudavancerepository.CreateEstadoSolicitud(estadosolicitudavanceins)
+							c.JSON(200, msgIns)
+						} else {
+							c.JSON(200, utilidades.CheckInfo( "El Estado de la solicitud ya existe"))
+						}	
+					c.JSON(200, "Se registro la cancelacion de la solicitud")
+				}//fin if- verificaavance					
+
 			}//fin switch
 
 }
-
 /*
 func Modify(c *gin.Context) {
 
@@ -225,8 +257,34 @@ func Modify(c *gin.Context) {
 	msg := tipoavancerepository.Update(tipoavanceupd)
 
 	c.JSON(200, msg)
-}
 
+    opcion := strings.TrimSpace(c.Params.ByName("opcion"))
+    vigencia, _ := strconv.ParseInt(c.Params.ByName("vigencia"), 0, 64)
+	solicitud, _ := strconv.ParseInt(c.Params.ByName("idSolicitud"), 0, 64)
+	tipo, _ := strconv.ParseInt(c.Params.ByName("idTipo"), 0, 64)
+
+	switch opcion {
+			case "tipoavance":
+				 var avanceupd solicitudavance.Solicitud
+				 if c.Bind(&avanceupd) == nil {
+					 solicitudtipoavanceins := avanceins.Tipoavance
+					 solicitudtipoavanceins.IdSolicitud = avanceins.Solicitud.IdSolicitud
+					 //fmt.Println("IDS :",solicitudtipoavanceins.IdSolicitud)
+					 _, msgTipo := solicitudavancerepository.FindOneSolicitudTipoAvance(solicitudtipoavanceins)
+					 if msgTipo.Code != 0 {
+							//registra Solicitud
+							msgIns := solicitudavancerepository.CreateSolicitudTipo(solicitudtipoavanceins)
+							c.JSON(200, msgIns)
+							} else {
+								c.JSON(200, utilidades.CheckInfo( "El tipo de avance ya existe"))
+							}
+				}//fin if- tipoavance	
+			}//fin switch
+
+
+
+}
+/*
 func Delete(c *gin.Context) {
 	tipoavanceid, _ := strconv.ParseInt(c.Params.ByName("idtipo"), 0, 64)
 	msg := tipoavancerepository.Delete(tipoavanceid)

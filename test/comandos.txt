@@ -23,6 +23,9 @@ curl -i -X POST -H "Content-Type: application/json" -d "{\"Beneficiario\":{\"IdB
 
 curl -i -X POST -H "Content-Type: application/json" -d "{\"Solicitud\":{\"IdSolicitud\": 25 ,\"Vigencia\": \"2016\" ,\"Consecutivo\": \"21\" ,\"Objetivo\": \"prueba 1\" ,\"Justificacion\": \"justifica 1\" } , \"Tipoavance\":{\"IdTipo\": 2,\"Descripcion\": \"descr prueba1\" ,\"Valor\": 111} }" http://localhost:8088/tesoreria/solicitudavance/tipoavance
 
+/* Cancel Solicitud */
+
+curl -i -X POST -H "Content-Type: application/json" -d "{\"IdSolicitud\": 25 ,\"Observaciones\": \"prueba 1\",\"Usuario\": \"system\" }" http://localhost:8088/tesoreria/solicitudavance/cancelavance
 
 /* registro verifica avance*/
 
