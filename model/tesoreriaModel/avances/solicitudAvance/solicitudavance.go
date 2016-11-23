@@ -146,6 +146,30 @@ type RequisitoSolicitudavance struct {
     
 }
 
+type Financiacionavance struct {
+    // db tag lets you specify the column name if it differs from the struct field
+    IdSolicitud         int64   `db:"id_solicitud" json:"IdSolicitud" `
+    InternoRubro        int64   `db:"interno_rubro" json:"InternoRubro" `
+    NombreRubro         string  `db:"nombre_rubro" json:"NombreRubro" `
+    Vigencia            string  `db:"vigencia" json:"Vigencia"`
+    UnidadEjecutora     string  `db:"unidad_ejecutora" json:"UnidadEjecutora"`
+    NumeroNecesidad     int64   `db:"necesidad" json:"NumeroNecesidad"`
+    FechaNecesidad      string  `db:"fecha_necesidad" json:"FechaNecesidad"`
+    ValorNecesidad      float64 `db:"valor_necesidad" json:"ValorNecesidad" `
+    Objeto              string  `db:"objeto" json:"Objeto"`
+    Disponibilidad      int64   `db:"disponibilidad" json:"Disponibilidad"`
+    FechaDisp           string  `db:"fecha_disp" json:"FechaDisp"`
+    ValorDisp           float64 `db:"valor_disp" json:"ValorDisp" `
+    Registro            int64   `db:"registro" json:"Registro"`
+    FechaRegistro       string  `db:"fecha_registro" json:"FechaRegistro"`
+    ValorRegistro       float64 `db:"valor_registro" json:"ValorRegistro" `
+    Compromiso          int64   `db:"compromiso" json:"Compromiso"`
+    OrdenPago           int64   `db:"orden_pago" json:"OrdenPago"`
+    FechaOrden          string  `db:"fecha_orden" json:"FechaOrden"`
+    ValorOrden          float64 `db:"valor_orden" json:"ValorOrden" `
+    Usuario             string  `db:"usuario"  json:"Usuario"`
+}
+
 /*
 func GetNewTipoavance (Id_tipoAux int64, ReferenciaAux string, NombreAux string,DescripcionAux string, EstadoAux string, Fecha_registroAux string) Tipoavance{
 	return Tipoavance{Id_tipo:Id_tipoAux,  Referencia:ReferenciaAux , Nombre:NombreAux ,Descripcion:DescripcionAux , Estado:EstadoAux string, Fecha_registro:Fecha_registroAux}

@@ -104,6 +104,24 @@ func CreateVerificaSolicitud(verificaavanceIns solicitudavance.RequisitoSolicitu
 
 	return msg
 }
+
+
+func CreateNecesidadAvance(necesidadavanceIns solicitudavance.Financiacionavance) model.MessageReturn{
+	var consultaIns string 
+	consultaIns = "INSERT INTO tesoreria.financiacion_avance"
+    consultaIns = consultaIns+"(id_solicitud, interno_rubro, nombre_rubro, vigencia, unidad_ejecutora,"
+    consultaIns = consultaIns+" necesidad, fecha_necesidad, valor_necesidad, objeto)"
+    consultaIns = consultaIns+" VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ";
+	//fmt.Printf("con :",consultaIns)
+	_, err := connectionDB.Exec(consultaIns, necesidadavanceIns.IdSolicitud ,necesidadavanceIns.InternoRubro ,necesidadavanceIns.NombreRubro,necesidadavanceIns.Vigencia, 
+		   necesidadavanceIns.UnidadEjecutora,necesidadavanceIns.NumeroNecesidad ,necesidadavanceIns.FechaNecesidad ,necesidadavanceIns.ValorNecesidad, necesidadavanceIns.Objeto)
+	msg := utilidades.CheckErr(err, "Error Insertando La necesidad del avance")
+	if msg.Code == 0{
+		return utilidades.CheckInfo(" Se registro la necesidad del avance, exitosamente.")
+		}
+	return msg
+}
+
 /*
 func Update(tipoavanceUpd tipoavance.Tipoavance) model.MessageReturn {
 	//_, err := connectionDB.Update(&tipoavance)
@@ -138,29 +156,6 @@ func Delete(id int64) model.MessageReturn{
 		return utilidades.CheckInfo(" Se Elimino el tipo de avance exitosamente.")
 	}
 }*/
-
-func FindAll(vigencia int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
-	var solicitudesavance []solicitudavance.SolicitudGeneral
-	var consulta string
-	consulta = "SELECT sol.id_solicitud, sol.id_beneficiario, sol.vigencia, sol.consecutivo, sol.objetivo, "
-    consulta = consulta+" sol.justificacion, sol.valor_total, sol.codigo_dependencia, sol.dependencia, "
-    consulta = consulta+" sol.codigo_facultad, sol.facultad, sol.codigo_proyecto_curricular, sol.proyecto_curricular, "
-    consulta = consulta+" sol.codigo_convenio, sol.convenio, sol.codigo_proyecto_inv, sol.proyecto_inv,"
-    consulta = consulta+" est_av.id_estado, est_av.fecha_registro, est.nombre estado_actual,"
-    consulta = consulta+" bene.id_beneficiario, bene.nombres, bene.apellidos, bene.tipo_documento, bene.documento, correo, telefono, celular"
-    consulta = consulta+" FROM tesoreria.solicitud_avance sol"
-    consulta = consulta+" INNER JOIN tesoreria.beneficiario bene ON bene.id_beneficiario=sol.id_beneficiario"
-    consulta = consulta+" INNER JOIN tesoreria.estado_avance est_av ON est_av.id_solicitud=sol.id_solicitud"
-    consulta = consulta+" INNER JOIN tesoreria.estados est ON est.id_estado=est_av.id_estado AND fecha_registro=(SELECT MAX(fecha_registro) FROM tesoreria.estado_avance WHERE id_solicitud=est_av.id_solicitud)"
-    consulta = consulta+" WHERE "
-    consulta = consulta+" sol.vigencia=$1 "
-    consulta = consulta+" ORDER BY sol.vigencia DESC, sol.consecutivo::int DESC"
-    //fmt.Println("dat :",consulta,vigencia)
-	_, err := connectionDB.Select(&solicitudesavance, consulta,vigencia)
-	msg := utilidades.CheckErr(err, "Error consultando las solicitudes de avance")
-	return solicitudesavance, msg
-
-}
 
 
 func FindOneBeneficiario(beneficiario solicitudavance.Beneficiario) (solicitudavance.Beneficiario, model.MessageReturn) {	
@@ -299,6 +294,56 @@ func FindOne(vigencia int64,solicitud int64) ([]solicitudavance.SolicitudGeneral
 
 	msg := utilidades.CheckErr(err, "Error consultando la solicitud de avance")
 	return solicitudavance, msg
+
+}
+
+
+func FindOneFinanciaAvance(vigencia int64,solicitud int64) ([]solicitudavance.Financiacionavance, model.MessageReturn) {
+	var financiaavance []solicitudavance.Financiacionavance
+	var consulta string
+	consulta = "SELECT id_solicitud, interno_rubro, nombre_rubro, vigencia, unidad_ejecutora, "
+    consulta = consulta+"necesidad, fecha_necesidad, valor_necesidad, objeto, "
+    consulta = consulta+" (CASE WHEN disponibilidad is null THEN '0' else disponibilidad END ) disponibilidad, "
+    consulta = consulta+" (CASE WHEN fecha_disp is null THEN 'ND' else fecha_disp END ) fecha_disp, "
+    consulta = consulta+" (CASE WHEN valor_disp is null THEN '0' else valor_disp END ) valor_disp, "
+	consulta = consulta+" (CASE WHEN registro is null THEN '0' else registro END ) registro, "
+	consulta = consulta+" (CASE WHEN fecha_registro is null THEN 'ND' else fecha_registro END ) fecha_registro, "
+    consulta = consulta+" (CASE WHEN valor_registro is null THEN '0' else valor_registro END ) valor_registro, "
+    consulta = consulta+" (CASE WHEN compromiso is null THEN '0' else compromiso END ) compromiso, "
+    consulta = consulta+" (CASE WHEN orden_pago is null THEN '0' else orden_pago END ) orden_pago, "
+  	consulta = consulta+" (CASE WHEN fecha_orden is null THEN 'ND' else fecha_orden END ) fecha_orden, "
+    consulta = consulta+" (CASE WHEN valor_orden is null THEN '0' else valor_orden END ) valor_orden "
+    consulta = consulta+"FROM tesoreria.financiacion_avance "
+    consulta = consulta+"WHERE  vigencia=$1 "
+    consulta = consulta+" AND  id_solicitud=$2 "
+    //fmt.Println("dat :",consulta,vigencia,solicitud)
+	_, err := connectionDB.Select(&financiaavance, consulta,vigencia,solicitud)
+
+	msg := utilidades.CheckErr(err, "Error consultando la financiacion del avance")
+	return financiaavance, msg
+
+}
+
+func FindAll(vigencia int64) ([]solicitudavance.SolicitudGeneral, model.MessageReturn) {
+	var solicitudesavance []solicitudavance.SolicitudGeneral
+	var consulta string
+	consulta = "SELECT sol.id_solicitud, sol.id_beneficiario, sol.vigencia, sol.consecutivo, sol.objetivo, "
+    consulta = consulta+" sol.justificacion, sol.valor_total, sol.codigo_dependencia, sol.dependencia, "
+    consulta = consulta+" sol.codigo_facultad, sol.facultad, sol.codigo_proyecto_curricular, sol.proyecto_curricular, "
+    consulta = consulta+" sol.codigo_convenio, sol.convenio, sol.codigo_proyecto_inv, sol.proyecto_inv,"
+    consulta = consulta+" est_av.id_estado, est_av.fecha_registro, est.nombre estado_actual,"
+    consulta = consulta+" bene.id_beneficiario, bene.nombres, bene.apellidos, bene.tipo_documento, bene.documento, correo, telefono, celular"
+    consulta = consulta+" FROM tesoreria.solicitud_avance sol"
+    consulta = consulta+" INNER JOIN tesoreria.beneficiario bene ON bene.id_beneficiario=sol.id_beneficiario"
+    consulta = consulta+" INNER JOIN tesoreria.estado_avance est_av ON est_av.id_solicitud=sol.id_solicitud"
+    consulta = consulta+" INNER JOIN tesoreria.estados est ON est.id_estado=est_av.id_estado AND fecha_registro=(SELECT MAX(fecha_registro) FROM tesoreria.estado_avance WHERE id_solicitud=est_av.id_solicitud)"
+    consulta = consulta+" WHERE "
+    consulta = consulta+" sol.vigencia=$1 "
+    consulta = consulta+" ORDER BY sol.vigencia DESC, sol.consecutivo::int DESC"
+    //fmt.Println("dat :",consulta,vigencia)
+	_, err := connectionDB.Select(&solicitudesavance, consulta,vigencia)
+	msg := utilidades.CheckErr(err, "Error consultando las solicitudes de avance")
+	return solicitudesavance, msg
 
 }
 
