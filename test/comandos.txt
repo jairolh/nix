@@ -36,6 +36,9 @@ curl -i -X POST -H "Content-Type: application/json" -d "[{\"IdTipo\":3,\"IdReq\"
 
 curl -i -X POST -H "Content-Type: application/json" -d "{\"IdSolicitud\":30,\"Vigencia\":\"2016\",\"UnidadEjecutora\":\"1\",\"InternoRubro\":9600,\"NombreRubro\":\"SISTEMA INTEGRAL DE INFORMACION\",\"NumeroNecesidad\":6817,\"Objeto\":\"REALIZAR AVANCE PARA PAGO DE SERVICIOS POR DEMANDA AMAZON WS\",\"ValorNecesidad\":12500000,\"FechaNecesidad\":\"14/09/16\",\"Usuario\":\"system\"}" http://localhost:8088/tesoreria/solicitudavance/necesidadavance
 
+/* Certifica Aprobacion Solicitud */
+
+curl -i -X POST -H "Content-Type: application/json" -d "{\"Presupuesto\":{\"IdSolicitud\":30,\"Vigencia\":\"2016\",\"UnidadEjecutora\":\"1\",\"InternoRubro\":9600,\"NombreRubro\":\"SISTEMA INTEGRAL DE INFORMACION\",\"NumeroNecesidad\":6817,\"Objeto\":\"REALIZAR AVANCE PARA PAGO DE SERVICIOS POR DEMANDA AMAZON WS\",\"ValorNecesidad\":12500000,\"FechaNecesidad\":\"14/09/2016\",\"Disponibilidad\":3402,\"FechaDisp\":\"2016-10-05\",\"ValorDisp\":18400000,\"Registro\":0,\"FechaRegistro\":\"\",\"ValorRegistro\":0,\"Compromiso\":0,\"OrdenPago\":0,\"FechaOrden\":\"\",\"ValorOrden\":0},\"Estadosolicitud\":{\"IdSolicitud\":30,\"Observaciones\":\"reds 896\",\"Usuario\":\"system\"}}" http://localhost:8088/tesoreria/solicitudavance/apruebaavance
 
 
 /*listar solicitudes*/

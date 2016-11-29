@@ -1,5 +1,16 @@
 package solicitudavance
 
+type Solicitud struct {
+        Solicitud Solicitudavance `json:"Solicitud"`
+        Beneficiario Beneficiario `json:"Beneficiario"`
+        Tipoavance Solicitudtipoavance `json:"Tipoavance"`
+        Estadosolicitud Estadosolicitudavance `json:"Estadosolicitud"`
+    }
+
+type CertificaSolicitud struct {
+        Presupuesto Financiacionavance `json:"Presupuesto"`
+        Estadosolicitud Estadosolicitudavance `json:"Estadosolicitud"`
+    }    
 
 type SolicitudGeneral struct {
     // db tag lets you specify the column name if it differs from the struct field
@@ -39,13 +50,6 @@ type SolicitudGeneral struct {
     Celular             string  `db:"celular" json:"Celular"`
 }
 
-
-type Solicitud struct {
-        Solicitud Solicitudavance `json:"Solicitud"`
-        Beneficiario Beneficiario `json:"Beneficiario"`
-        Tipoavance Solicitudtipoavance `json:"Tipoavance"`
-        Estadosolicitud Estadosolicitudavance `json:"Estadosolicitud"`
-    }
 
 type Consecutivoavance struct {
     // db tag lets you specify the column name if it differs from the struct field
@@ -167,7 +171,6 @@ type Financiacionavance struct {
     OrdenPago           int64   `db:"orden_pago" json:"OrdenPago"`
     FechaOrden          string  `db:"fecha_orden" json:"FechaOrden"`
     ValorOrden          float64 `db:"valor_orden" json:"ValorOrden" `
-    Usuario             string  `db:"usuario"  json:"Usuario"`
 }
 
 /*

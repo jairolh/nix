@@ -95,6 +95,10 @@ switch opcion {
 
 			case "necesidadavance":
 				    CrearNecesidadAvance(c);
+
+			case "apruebaavance":
+				    CrearApruebaAvance(c);
+				    
 			}//fin switch
 
 }
@@ -328,21 +332,56 @@ func CrearCancelarAvance(c *gin.Context) {
 	}//fin if- cancelavance
 }
 
-/*Options funcion para registrar la cancelacion de una solicitud de  avance */
+/*Options funcion para registrar la necesidad de una solicitud de  avance */
 func CrearNecesidadAvance(c *gin.Context) {
 	var necesidadins solicitudavance.Financiacionavance
 
 	if c.Bind(&necesidadins) == nil {
-	 	fmt.Println("IDS :",necesidadins)
-	 	fmt.Println("fecha:",necesidadins.FechaNecesidad)
-
-//fecha := time.Parse(necesidadins.FechaNecesidad)
-fecha,_ := time.Parse("2006-01-02 15:04:05",necesidadins.FechaNecesidad)	 	
-
-	 	fmt.Println("fecha2:",fecha)
-
 		msgIns := solicitudavancerepository.CreateNecesidadAvance(necesidadins)
 		c.JSON(200, msgIns)
 		
 	}//fin if- cancelavance
+}
+
+/*Options funcion para registrar la aprobación de una solicitud de  avance */
+func CrearApruebaAvance(c *gin.Context) {
+
+	var apruebains solicitudavance.CertificaSolicitud
+	if c.Bind(&apruebains) == nil {
+	 	//fmt.Println("IDS :",apruebains)
+	 	financiaupd := apruebains.Presupuesto
+	 	msg := solicitudavancerepository.UpdateFinancia(financiaupd)
+		
+		//registra estado	 
+	 	var IdEst int64	
+		var consultaEstado solicitudavance.Estados	
+		consultaEstado.Nombre = "aprobado"
+		consultaEstado.Proceso = "avances"
+		resEstado, msgEst := solicitudavancerepository.FindOneEstado(consultaEstado)
+		if msgEst.Code != 0 {
+			IdEst=0
+		} else {
+			//c.JSON(200, resEstado)
+			IdEst=resEstado.IdEstado
+		}
+		avanceins := apruebains.Estadosolicitud
+		//validacion y registro de estados de la solicitud de avance
+		var estadosolicitudavanceins solicitudavance.Estadosolicitudavance
+		estadosolicitudavanceins.IdSolicitud = avanceins.IdSolicitud
+		estadosolicitudavanceins.IdEstado=IdEst
+		estadosolicitudavanceins.Observaciones=avanceins.Observaciones
+		estadosolicitudavanceins.Usuario = avanceins.Usuario
+		//fmt.Println("CAN :",estadosolicitudavanceins)
+		_, msgEstAv := solicitudavancerepository.FindOneEstadoAvance(estadosolicitudavanceins)
+		if msgEstAv.Code != 0 {
+			//registra estados
+				//msgIns := solicitudavancerepository.CreateEstadoSolicitud(estadosolicitudavanceins)
+				solicitudavancerepository.CreateEstadoSolicitud(estadosolicitudavanceins)
+				//c.JSON(200, msgIns)
+			} else {
+				//c.JSON(200, utilidades.CheckInfo( "El Estado de la solicitud ya existe"))
+			}	
+
+		c.JSON(200, msg)
+	}//fin if- apruebaavance
 }
