@@ -99,6 +99,9 @@ switch opcion {
 			case "apruebaavance":
 				    CrearApruebaAvance(c);
 				    
+			case "giroavance":
+				    CrearGiroAvance(c);
+	    
 			}//fin switch
 
 }
@@ -356,6 +359,49 @@ func CrearApruebaAvance(c *gin.Context) {
 	 	var IdEst int64	
 		var consultaEstado solicitudavance.Estados	
 		consultaEstado.Nombre = "aprobado"
+		consultaEstado.Proceso = "avances"
+		resEstado, msgEst := solicitudavancerepository.FindOneEstado(consultaEstado)
+		if msgEst.Code != 0 {
+			IdEst=0
+		} else {
+			//c.JSON(200, resEstado)
+			IdEst=resEstado.IdEstado
+		}
+		avanceins := apruebains.Estadosolicitud
+		//validacion y registro de estados de la solicitud de avance
+		var estadosolicitudavanceins solicitudavance.Estadosolicitudavance
+		estadosolicitudavanceins.IdSolicitud = avanceins.IdSolicitud
+		estadosolicitudavanceins.IdEstado=IdEst
+		estadosolicitudavanceins.Observaciones=avanceins.Observaciones
+		estadosolicitudavanceins.Usuario = avanceins.Usuario
+		//fmt.Println("CAN :",estadosolicitudavanceins)
+		_, msgEstAv := solicitudavancerepository.FindOneEstadoAvance(estadosolicitudavanceins)
+		if msgEstAv.Code != 0 {
+			//registra estados
+				//msgIns := solicitudavancerepository.CreateEstadoSolicitud(estadosolicitudavanceins)
+				solicitudavancerepository.CreateEstadoSolicitud(estadosolicitudavanceins)
+				//c.JSON(200, msgIns)
+			} else {
+				//c.JSON(200, utilidades.CheckInfo( "El Estado de la solicitud ya existe"))
+			}	
+
+		c.JSON(200, msg)
+	}//fin if- apruebaavance
+}
+
+/*Options funcion para registrar la certificación de Girola aprobación de una solicitud de  avance */
+func CrearGiroAvance(c *gin.Context) {
+
+	var apruebains solicitudavance.CertificaSolicitud
+	if c.Bind(&apruebains) == nil {
+	 	//fmt.Println("IDS :",apruebains)
+	 	financiaupd := apruebains.Presupuesto
+	 	msg := solicitudavancerepository.UpdateFinancia(financiaupd)
+		
+		//registra estado	 
+	 	var IdEst int64	
+		var consultaEstado solicitudavance.Estados	
+		consultaEstado.Nombre = "girado"
 		consultaEstado.Proceso = "avances"
 		resEstado, msgEst := solicitudavancerepository.FindOneEstado(consultaEstado)
 		if msgEst.Code != 0 {

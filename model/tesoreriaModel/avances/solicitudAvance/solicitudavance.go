@@ -171,6 +171,7 @@ type Financiacionavance struct {
     OrdenPago           int64   `db:"orden_pago" json:"OrdenPago"`
     FechaOrden          string  `db:"fecha_orden" json:"FechaOrden"`
     ValorOrden          float64 `db:"valor_orden" json:"ValorOrden" `
+    FechaCertificacion  string  `db:"fecha_certifica_giro" json:"FechaCertificacion"`
 }
 
 /*

@@ -127,14 +127,14 @@ func UpdateFinancia(financiaavanceUpd solicitudavance.Financiacionavance) model.
     consultaUpd = "UPDATE tesoreria.financiacion_avance "
     consultaUpd = consultaUpd+" SET disponibilidad=$6, fecha_disp=$7, valor_disp=$8, registro=$9, "
     consultaUpd = consultaUpd+" fecha_registro=$10, valor_registro=$11, compromiso=$12, orden_pago=$13,  "
-    consultaUpd = consultaUpd+" fecha_orden=$14, valor_orden=$15 "
+    consultaUpd = consultaUpd+" fecha_orden=$14, valor_orden=$15, fecha_certifica_giro=$16 "
     consultaUpd = consultaUpd+" WHERE  "
     consultaUpd = consultaUpd+" id_solicitud=$1 AND interno_rubro=$2 AND vigencia=$3 AND unidad_ejecutora=$4 AND necesidad=$5"
 	//fmt.Printf("con :",consultaUpd)
     _, err := connectionDB.Exec(consultaUpd, financiaavanceUpd.IdSolicitud ,financiaavanceUpd.InternoRubro ,financiaavanceUpd.Vigencia, 
     							financiaavanceUpd.UnidadEjecutora,financiaavanceUpd.NumeroNecesidad ,financiaavanceUpd.Disponibilidad ,financiaavanceUpd.FechaDisp ,
     							financiaavanceUpd.ValorDisp,financiaavanceUpd.Registro ,financiaavanceUpd.FechaRegistro, financiaavanceUpd.ValorRegistro,
-    							financiaavanceUpd.Compromiso, financiaavanceUpd.OrdenPago, financiaavanceUpd.FechaOrden, financiaavanceUpd.ValorOrden)
+    							financiaavanceUpd.Compromiso, financiaavanceUpd.OrdenPago, financiaavanceUpd.FechaOrden, financiaavanceUpd.ValorOrden, financiaavanceUpd.FechaCertificacion)
 	msg := utilidades.CheckErr(err, "Error Actualizando la financiacion del avance")
 	if msg.Code == 0{
 		return utilidades.CheckInfo(" Se Actualizo la financiacion del avance exitosamente.")
