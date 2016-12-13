@@ -15,7 +15,7 @@ curl -i -X GET -H "Content-Type: application/json" -d "{\"Id_tipo\": \"2\" }" ht
 
 
 
-/* Solicitud avance*/
+/******* Solicitud avance*****/
 
 curl -i -X POST -H "Content-Type: application/json" -d "{\"Beneficiario\":{\"IdBeneficiario\": 2 ,\"Nombre\": \"Prueba 2\",\"Apellido\": \"Segundo\" ,\"TipoDocumento\": \"CC\" ,\"Documento\": \"123456\", \"LugarDocumento\": \"bogota\",\"Direccion\": \"Av 123\" ,\"Correo\": \"A@as.ce\",\"Telefono\": \"123456789\" ,\"Celular\": \"987654321\"}, \"Solicitud\":{\"IdSolicitud\": 1 ,\"IdBeneficiario\": 2 ,\"Vigencia\": \"2016\" ,\"Consecutivo\": \"21\" ,\"Objetivo\": \"prueba 1\" ,\"Justificacion\": \"justifica 1\" ,\"ValorTotal\": 300.56,\"CodigoDependencia\": \"1\" ,\"Dependencia\": \" dep 1\",\"CodigoFacultad\": \"1\" ,\"Facultad\": \"fac 1\" ,\"CodigoProyectoCur\": \"101\" ,\"ProyectoCurricular\": \"prc 1\",\"CodigoConvenio\": \"c1\" ,\"Convenio\": \"conv 1\" ,\"CodigoProyectoInv\": \"i1\",\"ProyectoInv\": \"pinv 1\"} , \"Tipoavance\":{\"IdTipo\": 10,\"Descripcion\": \"descr prueba1\" ,\"Valor\": 111} , \"Estadosolicitud\":{\"IdEstado\": 3 ,\"FechaRegistro\": \"f1\" ,\"Observaciones\": \"observacion 1\" ,\"Usuario\": \"jlh\"} }" http://localhost:8088/tesoreria/solicitudavance/solicitud
 
@@ -61,3 +61,10 @@ curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/requisitosSolicit
 
 /*buscar por beneficiarios los avances y su estado*/
 curl -i -X GET http://localhost:8088/tesoreria/solicitudavance/solicitudAvanceBeneficiario/2016/5/18018
+
+
+
+/***************************/
+
+/*listar solicitudes*/
+curl -i -X GET http://localhost:8088/tesoreria/legalizaravance/lista/2016

@@ -8,6 +8,7 @@ import (
 	"nix/web/tesoreriaweb/avances/requisitos"
 	"nix/web/tesoreriaweb/avances/requisitoTipoAvance"
 	"nix/web/tesoreriaweb/avances/solicitudAvance"
+	"nix/web/tesoreriaweb/avances/legalizarAvance"
 
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
@@ -32,6 +33,7 @@ func main() {
 	requisitosweb.Init(r, security.MiddlewareAUTH)
 	requisitotipoavanceweb.Init(r, security.MiddlewareAUTH)
 	solicitudavanceweb.Init(r, security.MiddlewareAUTH)
+	legalizaravanceweb.Init(r, security.MiddlewareAUTH)
 
 
 
